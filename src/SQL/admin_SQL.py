@@ -1,4 +1,5 @@
 #----
+import os
 import aiosqlite
 import sqlite3
 #----
@@ -6,8 +7,9 @@ import sqlite3
 #-----Использование базы log_admin------------
 #
 #
-DB_name_2="log_admin.db" # <--- Использованная база для записи логов действий администрации через меню администрации
-DB_name = "users.db" # <--- Использованная база для просмотра юзеров и админского функционала
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # <- src/
+DB_name_2 = os.path.join(BASE_DIR, "log_admin.db") # <--- Использованная база для записи логов действий администрации через меню администрации
+DB_name = os.path.join(BASE_DIR, "users.db") # <--- Использованная база для просмотра юзеров и админского функционала
 #
 #
 #------------------------------------------------------------------------------------------#
@@ -16,15 +18,15 @@ DB_name = "users.db" # <--- Использованная база для про�
 async def get_users_log_start():
     async with aiosqlite.connect(DB_name) as db:
         try:
-            async with db.execute("SELECT user_id from users ORDER BY RANDOM() LIMIT 1;") as cursor:
+            async with db.execute("SELECT user_id, language, joinAT FROM users;") as cursor:
                 return await cursor.fetchall()
 
         except sqlite3.OperationalError:
             query = (
                 "CREATE TABLE IF NOT EXISTS users ("
-                "user_id INT UNIQUE, "
-                "language TEXT,"
-                "joinAT timestamp DEFAULT CURRENT_TIMESTAMP )"
+                "user_id INTEGER UNIQUE, "
+                "language TEXT, "
+                "joinAT DATETIME DEFAULT CURRENT_TIMESTAMP )"
             )
             await db.execute(query)
             await db.commit()
@@ -67,7 +69,7 @@ async def see_admins_logs():
 async def do_admins_logs(admin_id: int, action: str):
     async with aiosqlite.connect(DB_name_2) as db:
         await db.execute(
-            "INSERT INTO admins_logs (admin_id, action) VALUES (?, ?) ON CONFLICT (admin_id, action) DO NOTHING",
+            "INSERT INTO admins_logs (admin_id, action) VALUES (?, ?)",
             (admin_id, action)
         )
         await db.commit()
@@ -85,7 +87,7 @@ async def drop_logs_table():
 # ------------------------------------------------------------------------------------------#
 async def get_stats_last_join():
     async with aiosqlite.connect(DB_name) as db:
-        async with db.execute("SELECT Stamp FROM users ORDER BY Stamp DESC LIMIT 1;") as cursor:
+        async with db.execute("SELECT joinAT FROM users ORDER BY joinAT DESC LIMIT 1;") as cursor:
             result = await cursor.fetchone()
             return result[0] if result else None
 # Время последней регистрации

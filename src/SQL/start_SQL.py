@@ -1,5 +1,6 @@
 #Вся логика SQLite лежит в данном файле.
 #! Важно к прочтению что, тут строго SQlite!
+import os
 import sqlite3
 import aiosqlite
 from aiogram import Router
@@ -11,7 +12,8 @@ router = Router()
 #----Использование базы users----------------
 #
 #
-DB_name = "users.db" #<-------- Использована база для сохранения после того как пользователь пройдет первоначальную регистрацию в боте
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # <- src/
+DB_name = os.path.join(BASE_DIR, "users.db") #<-------- Использована база для сохранения после того как пользователь пройдет первоначальную регистрацию в боте
 #
 #
 async def log_start():
@@ -20,7 +22,7 @@ async def log_start():
             "CREATE TABLE IF NOT EXISTS users ("
             "user_id INTEGER UNIQUE, "
             "language TEXT, "
-            "joinAt DATETIME DEFAULT CURRENT_TIMESTAMP )"
+            "joinAT DATETIME DEFAULT CURRENT_TIMESTAMP )"
         )
         await db.execute(query)
         await db.commit()
@@ -45,9 +47,9 @@ async def get_users_log_start():
         except sqlite3.OperationalError as e:
             query = (
                 "CREATE TABLE IF NOT EXISTS users ("
-                "user_id INT UNIQUE, "
-                "language TEXT,"
-                "joinAT timestamp DEFAULT CURRENT_TIMESTAMP )"
+                "user_id INTEGER UNIQUE, "
+                "language TEXT, "
+                "joinAT DATETIME DEFAULT CURRENT_TIMESTAMP )"
             )
             await db.execute(query)
             await db.commit()
