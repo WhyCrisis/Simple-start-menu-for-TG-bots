@@ -8,14 +8,16 @@ from dotenv import load_dotenv
 from src.Admin.admin_FSM import Delete
 #---
 load_dotenv()
-auid = int(getenv("admin"))
+_admin = getenv("admin")
+auid = int(_admin) if _admin and _admin.isdigit() else None
 #---
 router = Router()
 #----
 #Databases
 from SQL.admin_SQL import get_users_log_start, get_stats_last_join, \
     get_stats_user_top_language, \
-    get_stats_user_count, log_start, log_admins_logs, do_admins_logs, see_admins_logs, check_delete, delete_user, drop_user_table
+    get_stats_user_count, log_admins_logs, do_admins_logs, see_admins_logs, check_delete, delete_user, drop_user_table
+from SQL.start_SQL import log_start
 
 #----
 #Keyboards
@@ -112,6 +114,9 @@ async def asdads(callback: CallbackQuery):
 
 @router.callback_query(F.data == 'drop_admin')
 async def drop_admin(callback: CallbackQuery, state:FSMContext):
+    if callback.from_user.id != auid:
+        await callback.answer('Access denied', show_alert=True)
+        return
 
     #---Логирование---
     admin_id = callback.from_user.id
@@ -175,6 +180,10 @@ async def true_user(message: Message, state: FSMContext):
 
 @router.callback_query(F.data == 'drop_user')
 async def drop_user(callback: CallbackQuery, state: FSMContext):
+    if callback.from_user.id != auid:
+        await callback.answer('Access denied', show_alert=True)
+        return
+
     await callback.answer()
     await callback.message.delete()
     #------
