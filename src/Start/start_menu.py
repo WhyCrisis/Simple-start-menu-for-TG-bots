@@ -28,17 +28,8 @@ with open(json_path, "r", encoding="utf-8") as f:
 def get_text(lang: str, key: str):
     return TRANSLATIONS.get(lang, {}).get(key, key)
 #----
-@router.callback_query(F.data == 'restart')
-async def process_restart(callback: CallbackQuery):
-    await callback.answer()
-    await callback.message.delete()
-    await start(callback.message)
-
-@router.message(Command('start'))
-async def start(message: Message, state: FSMContext):
-
+async def show_start(message: Message, state: FSMContext, user_id: int):
     await log_start()
-    user_id = message.from_user.id
     lang = await get_user_language(user_id)
 
     if lang is None:
@@ -55,7 +46,18 @@ async def start(message: Message, state: FSMContext):
             parse_mode='HTML',
             reply_markup=choose_language())
     else:
+        await state.clear()
         await launch_menu(message, user_id)
+
+@router.callback_query(F.data == 'restart')
+async def process_restart(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    await callback.message.delete()
+    await show_start(callback.message, state, callback.from_user.id)
+
+@router.message(Command('start'))
+async def start(message: Message, state: FSMContext):
+    await show_start(message, state, message.from_user.id)
 
 
 @router.callback_query(F.data.in_({"ru", "en", "es", "ua"}))
@@ -82,7 +84,14 @@ async def process_agree(callback: CallbackQuery, state: FSMContext):
 
     data = await state.get_data()
     user_id = callback.from_user.id
-    language = data['lang']
+    language = data.get('lang')
+
+    if language is None:
+        await callback.answer('Сессия устарела, начните заново', show_alert=True)
+        await callback.message.delete()
+        await show_start(callback.message, state, user_id)
+        return
+
     #Передаем в БД
     await add_user(user_id, language)
     #Вызываем главное меню на нужном языке удалив прошлое окно
@@ -95,5 +104,5 @@ async def process_agree(callback: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data=='cancel')
 async def process_cancel(callback: CallbackQuery, state: FSMContext):
     await callback.message.delete()
-    await start(callback.message, state)
+    await show_start(callback.message, state, callback.from_user.id)
 
