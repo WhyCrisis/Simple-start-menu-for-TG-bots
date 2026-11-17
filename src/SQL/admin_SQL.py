@@ -18,8 +18,8 @@ DB_name = os.path.join(BASE_DIR, "users.db") # <--- Использованная
 async def get_users_log_start():
     async with aiosqlite.connect(DB_name) as db:
         try:
-            async with db.execute("SELECT user_id, language, joinAT FROM users;") as cursor:
-                return await cursor.fetchone()
+            async with db.execute("SELECT user_id, language, joinAT FROM users ORDER BY joinAT DESC LIMIT 1;") as cursor:
+                return await cursor.fetchall()
 
         except sqlite3.OperationalError:
             query = (
