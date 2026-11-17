@@ -60,7 +60,7 @@ async def check_users(callback:CallbackQuery):
     users = await get_users_log_start()
 
     if not users:
-        await callback.message.answer('База пользователей пуста!')
+        await callback.message.answer('Database is empty!')
         await show_admin_menu(callback.message)
         return
 
@@ -162,7 +162,7 @@ async def delete_user_(callback: CallbackQuery,state: FSMContext):
 @router.message(Delete.user_id)
 async def true_user(message: Message, state: FSMContext):
 
-    if not message.text.isdigit():
+    if not message.text or message.text.isdigit():
         await message.answer('Enter the valid uid to delete!', reply_markup=back_to_admin())
         return
 
