@@ -6,19 +6,9 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 def fast_admin_things():
     keyboard = InlineKeyboardMarkup(
         inline_keyboard= [
-            [InlineKeyboardButton(text='⛔️Drop Database⛔️', callback_data="drop")],
             [InlineKeyboardButton(text='🗑Delete user🗑', callback_data="delete_user")],
             [InlineKeyboardButton(text='📑See admin logs📑', callback_data="show_admin_logs")],
             [InlineKeyboardButton(text='🗑See users🗑', callback_data="check_users")]
-        ]
-    )
-    return keyboard
-
-def delete_db():
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard= [
-            [InlineKeyboardButton(text='✅I know what am i doing✅', callback_data="drop_admin")],
-            [InlineKeyboardButton(text='⛔️Back⛔️', callback_data="back_to_admin")]
         ]
     )
     return keyboard

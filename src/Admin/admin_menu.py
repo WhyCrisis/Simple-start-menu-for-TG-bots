@@ -41,7 +41,7 @@ async def show_admin_menu(message: Message):
     reply_markup = fast_admin_things()
     await message.answer(text, parse_mode=parse_mode, reply_markup=reply_markup)
 
-@router.message(Command('admin_menu_with_things'))
+@router.message(Command('admin_menu_'))
 async def admin_menu_with_things(message: Message):
     if message.from_user.id == auid:
         await show_admin_menu(message)
@@ -98,19 +98,7 @@ async def admins_fast_check(callback: CallbackQuery):
 
 
 
-#-----Удаление БД
-
-@router.callback_query(F.data == 'drop')
-async def asdads(callback: CallbackQuery):
-    if callback.from_user.id != auid:
-        await callback.answer('Access denied', show_alert=True)
-        return
-
-    text = ('This command is <b>PERMANENT</b>!\nThat means that no undo of that!\nTo proceed push button below')
-    parse_mode = 'HTML'
-    await callback.message.delete()
-    await callback.answer()
-    await callback.message.answer(text,parse_mode=parse_mode,reply_markup=delete_db())
+#-----Удаление БД логов администрации
 
 @router.callback_query(F.data == 'drop_admin')
 async def drop_admin(callback: CallbackQuery, state:FSMContext):
