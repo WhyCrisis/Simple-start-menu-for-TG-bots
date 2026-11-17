@@ -31,7 +31,7 @@ async def show_admin_menu(message: Message):
     last = await get_stats_last_join()
 
     text = (f''
-            f'Diabetes bot\n'
+            f' \n'
             f'-------------------------\n\n\n'
             f'Hi, total count:\n'
             f'Users: <b>{users}</b>\n'
@@ -69,7 +69,7 @@ async def check_users(callback:CallbackQuery):
         f"Айди: {user_id} | Язык: {lang} | Штамп: {joinAT}"
         for user_id, lang, joinAT in users
     ]
-    text = "Текущие пользователи:\n\n" + "\n".join(lines)
+    text = "Current users:\n\n" + "\n".join(lines)
 
     await callback.message.answer(text,reply_markup=back_to_admin())
 
@@ -83,7 +83,7 @@ async def admins_fast_check(callback: CallbackQuery):
         logs = await see_admins_logs()
 
         if not logs:
-            await callback.message.answer('База действий пуста!')
+            await callback.message.answer('Database is empty!!')
             await show_admin_menu(callback.message)
             return
 
@@ -91,7 +91,7 @@ async def admins_fast_check(callback: CallbackQuery):
             f"Айди: {admin_id} | Действие: {action} | Штамп: {Time}"
             for admin_id, action, Time in logs
         ]
-        text = "Текущие действия администрации:\n\n" + "\n".join(lines)
+        text = "Admin logs:\n\n" + "\n".join(lines)
 
         await callback.message.answer(text, reply_markup=back_to_admin())
 
