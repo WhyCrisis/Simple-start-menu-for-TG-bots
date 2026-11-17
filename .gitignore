@@ -4,5 +4,6 @@
 .env
 DB_start
 .gitignore
+check.py
 #почему
 
