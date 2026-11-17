@@ -88,7 +88,7 @@ async def admins_fast_check(callback: CallbackQuery):
             return
 
         lines = [
-            f"Айди: {admin_id} | Действие: {action} | Штамп: {Time}"
+            f"Id: {admin_id} | Action: {action} | Stamp: {Time}"
             for admin_id, action, Time in logs
         ]
         text = "Admin logs:\n\n" + "\n".join(lines)
@@ -122,7 +122,6 @@ async def drop_admin(callback: CallbackQuery, state:FSMContext):
     admin_id = callback.from_user.id
     action = 'Database drop'
     await do_admins_logs(admin_id, action)
-    print(action)
     #---Логирование---
 
     await callback.answer('Deleted! This action is in log now!', show_alert=True)
@@ -162,7 +161,7 @@ async def delete_user_(callback: CallbackQuery,state: FSMContext):
 @router.message(Delete.user_id)
 async def true_user(message: Message, state: FSMContext):
 
-    if not message.text or message.text.isdigit():
+    if not message.text or not message.text.isdigit():
         await message.answer('Enter the valid uid to delete!', reply_markup=back_to_admin())
         return
 
