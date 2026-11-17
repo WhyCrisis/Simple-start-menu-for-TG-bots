@@ -19,7 +19,7 @@ async def get_users_log_start():
     async with aiosqlite.connect(DB_name) as db:
         try:
             async with db.execute("SELECT user_id, language, joinAT FROM users;") as cursor:
-                return await cursor.fetchall()
+                return await cursor.fetchone()
 
         except sqlite3.OperationalError:
             query = (

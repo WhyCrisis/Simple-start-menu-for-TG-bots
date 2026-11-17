@@ -1,7 +1,6 @@
 #-----
 from aiogram import Router
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-import json
 #-----
 
 def fast_admin_things():
