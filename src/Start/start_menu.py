@@ -29,7 +29,6 @@ def get_text(lang: str, key: str):
     return TRANSLATIONS.get(lang, {}).get(key, key)
 #----
 async def show_start(message: Message, state: FSMContext, user_id: int):
-    await log_start()
     lang = await get_user_language(user_id)
 
     if lang is None:

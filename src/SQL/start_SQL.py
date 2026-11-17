@@ -16,7 +16,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # <- src
 DB_name = os.path.join(BASE_DIR, "users.db") #<-------- Использована база для сохранения после того как пользователь пройдет первоначальную регистрацию в боте
 #
 #
-async def log_start():
+async def init_db():
     async with aiosqlite.connect(DB_name) as db:
         query = (
             "CREATE TABLE IF NOT EXISTS users ("
