@@ -87,7 +87,7 @@ async def process_agree(callback: CallbackQuery, state: FSMContext):
     language = data.get('lang')
 
     if language is None:
-        await callback.answer('Сессия устарела, начните заново', show_alert=True)
+        await callback.answer('Login session is not valid anymore. Please restart using command "/start"', show_alert=True)
         await callback.message.delete()
         await show_start(callback.message, state, user_id)
         return

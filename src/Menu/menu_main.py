@@ -39,7 +39,7 @@ async def launch_menu(message: Message, user_id: int):
             reply_markup=back_if_broken())
         return
 
-    text = get_text(language, 'main_menu_lang')
+    text = get_text(language, 'main_menu_lang') #!
     await message.answer(text, parse_mode='HTML')
 
 
