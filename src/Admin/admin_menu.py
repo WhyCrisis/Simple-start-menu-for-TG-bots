@@ -14,14 +14,14 @@ auid = int(_admin) if _admin and _admin.isdigit() else None
 router = Router()
 #----
 #Databases
-from SQL.admin_SQL import get_users_log_start, get_stats_last_join, \
+from SQL.admin_SQL import get_stats_last_join, \
     get_stats_user_top_language, \
-    get_stats_user_count, log_admins_logs, do_admins_logs, see_admins_logs, check_delete, delete_user, drop_user_table
-from SQL.start_SQL import log_start
+    get_stats_user_count, log_admins_logs, do_admins_logs, see_admins_logs, check_delete, delete_user, get_users_log_start
+
 
 #----
 #Keyboards
-from src.Admin.admin_keyboard import fast_admin_things, delete_db, delete_users, back_to_admin
+from src.Admin.admin_keyboard import fast_admin_things, delete_users, back_to_admin
 
 #----
 async def show_admin_menu(message: Message):
@@ -94,42 +94,6 @@ async def admins_fast_check(callback: CallbackQuery):
         text = "Admin logs:\n\n" + "\n".join(lines)
 
         await callback.message.answer(text, reply_markup=back_to_admin())
-
-
-
-
-#-----Удаление БД логов администрации
-
-@router.callback_query(F.data == 'drop_admin')
-async def drop_admin(callback: CallbackQuery, state:FSMContext):
-    if callback.from_user.id != auid:
-        await callback.answer('Access denied', show_alert=True)
-        return
-
-    #---Логирование---
-    admin_id = callback.from_user.id
-    action = 'Database drop'
-    await do_admins_logs(admin_id, action)
-    #---Логирование---
-
-    await callback.answer('Deleted! This action is in log now!', show_alert=True)
-
-    #Удаление и создание новой базы
-    await drop_user_table()
-    await state.clear()
-    #Создание
-    await log_start()
-
-    await callback.message.delete()
-    await show_admin_menu(callback.message)
-
-@router.callback_query(F.data == 'back_to_admin')
-async def back_admin(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
-    await callback.message.delete()
-    await show_admin_menu(callback.message)
-    await state.clear()
-
 
 
 #----Удаление пользователя

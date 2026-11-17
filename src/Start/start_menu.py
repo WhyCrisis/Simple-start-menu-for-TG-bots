@@ -7,7 +7,7 @@ import os
 import json
 #----
 #Databases
-from SQL.start_SQL import log_start, add_user, get_user_language
+from SQL.start_SQL import add_user, get_user_language
 #----
 #Keyboards
 from src.Start.start_keyboard import choose_language,get_rules_keyboard
@@ -32,7 +32,6 @@ async def show_start(message: Message, state: FSMContext, user_id: int):
     lang = await get_user_language(user_id)
 
     if lang is None:
-        # Главное не забыть запустить бд
         await state.clear()
         await state.set_state(Form.lang)
         # даем выбор языка

@@ -12,36 +12,7 @@ DB_name_2 = os.path.join(BASE_DIR, "log_admin.db") # <--- Использован
 DB_name = os.path.join(BASE_DIR, "users.db") # <--- Использованная база для просмотра юзеров и админского функционала
 #
 #
-#------------------------------------------------------------------------------------------#
-#ЛОГ СТАРТ создает базу данных users при жестком сбросе через админское меню
-#------------------------------------------------------------------------------------------#
-async def get_users_log_start():
-    async with aiosqlite.connect(DB_name) as db:
-        try:
-            async with db.execute("SELECT user_id, language, joinAT FROM users ORDER BY joinAT DESC LIMIT 1;") as cursor:
-                return await cursor.fetchall()
 
-        except sqlite3.OperationalError:
-            query = (
-                "CREATE TABLE IF NOT EXISTS users ("
-                "user_id INTEGER UNIQUE, "
-                "language TEXT, "
-                "joinAT DATETIME DEFAULT CURRENT_TIMESTAMP )"
-            )
-            await db.execute(query)
-            await db.commit()
-            return []
-
-async def log_start():
-    async with aiosqlite.connect(DB_name) as db:
-        query = (
-            "CREATE TABLE IF NOT EXISTS users ("
-            "user_id INTEGER UNIQUE, "
-            "language TEXT, "
-            "joinAT DATETIME DEFAULT CURRENT_TIMESTAMP )"
-        )
-        await db.execute(query)
-        await db.commit()
 #------------------------------------------------------------------------------------------#
 #Запись действия администратора через инициализацию базы данных "admin_logs" и последующая запись
 #------------------------------------------------------------------------------------------#
@@ -73,14 +44,6 @@ async def do_admins_logs(admin_id: int, action: str):
             (admin_id, action)
         )
         await db.commit()
-
-async def drop_logs_table():
-    try:
-        async with aiosqlite.connect(DB_name_2) as db:
-            await db.execute("DROP TABLE IF EXISTS admins_logs")
-            await db.commit()
-    except Exception as e:
-        print(f"An error occurred: {e}")
 
 # ------------------------------------------------------------------------------------------#
 # Статистика админского окна после команды /get_menu_with_things
